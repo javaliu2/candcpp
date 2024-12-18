@@ -26,3 +26,8 @@ add_executable(1847
 leetcode/binary_search/1847.cpp
 )
 
+add_executable(binary_tree
+leetcode/binary_tree/binarytree.cpp 
+leetcode/binary_tree/main.cpp
+)
+
