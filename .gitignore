@@ -4,3 +4,6 @@ books/
 .clang-format
 翁恺C++代码/
 practicemakesprefect/
+project/tinyhttpd.code-workspace
+project/tinyhttpd/client
+project/tinyhttpd/httpd
