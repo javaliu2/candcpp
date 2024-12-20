@@ -68,7 +68,11 @@ void accept_request(void *arg) {
 
     numchars = get_line(client, buf, sizeof(buf));
 
-    printf("request: %s", buf);
+    // ===== DEBUG =====
+    int line = 1;
+    printf("GET line %d: %s", line++, buf);
+    // ===== DEBUG =====
+    
     
     i = 0;
     j = 0;
@@ -110,15 +114,21 @@ void accept_request(void *arg) {
     }
 
     sprintf(path, "htdocs%s", url);
+    printf("path: %s\n", path);
+
     if (path[strlen(path) - 1] == '/') strcat(path, "index.html");
-    if (stat(path, &st) == -1) {
-        while ((numchars > 0) && strcmp("\n", buf)) /* read & discard headers */
+    // 检索path指定的文件是否存在
+    if (stat(path, &st) == -1) {  // 文件不存在
+        while ((numchars > 0) && strcmp("\n", buf)) { /* read & discard headers */
             numchars = get_line(client, buf, sizeof(buf));
+            printf("GET line %d: %s", line++, buf);
+        }
         not_found(client);
     } else {
-        if ((st.st_mode & S_IFMT) == S_IFDIR) strcat(path, "/index.html");
+        // if ((st.st_mode & S_IFMT) == S_IFDIR) strcat(path, "/index.html");  // identifier "S_IFDIR", "S_IFMT" is undefined
+        if (S_ISDIR(st.st_mode)) strcat(path, "/index.html");  // 等价的逻辑，判断是否是目录
         if ((st.st_mode & S_IXUSR) || (st.st_mode & S_IXGRP) ||
-            (st.st_mode & S_IXOTH))
+            (st.st_mode & S_IXOTH))   // 分别判断是否是 用户可执行文件、组可执行文件、其他可执行文件
             cgi = 1;
         if (!cgi)
             serve_file(client, path);
@@ -218,11 +228,21 @@ void execute_cgi(int client, const char *path, const char *method,
     else if (strcasecmp(method, "POST") == 0) /*POST*/
     {
         numchars = get_line(client, buf, sizeof(buf));
+
+        // ===== DEBUG =====
+        int line = 2;
+        printf("POST line %d: %s", line++, buf);
+        // ===== DEBUG =====
         while ((numchars > 0) && strcmp("\n", buf)) {
             buf[15] = '\0';
+            // 截取前15个字符, 判断其是否是Content-Length项
+            // 实例：前端提交blue
+            // C o n t e n t - L e n  g  t  h  : ' ' 1  0 '\n' '\0'
+            // 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18  19
             if (strcasecmp(buf, "Content-Length:") == 0)
                 content_length = atoi(&(buf[16]));
             numchars = get_line(client, buf, sizeof(buf));
+            printf("POST line %d: %s", line++, buf);
         }
         if (content_length == -1) {
             bad_request(client);
@@ -232,6 +252,15 @@ void execute_cgi(int client, const char *path, const char *method,
     {
     }
 
+    /** 
+     * pipe(): 用于进程之间通信的管道
+     * 创建两个管道用于父子进程之间的通信
+     * cgi_output[0]: 父进程读端
+     * cgi_input[1]:  父进程写端
+     * 
+     * cgi_input[0]:  子进程读端
+     * cgi_output[1]: 子进程写端
+    */
     if (pipe(cgi_output) < 0) {
         cannot_execute(client);
         return;
@@ -247,23 +276,37 @@ void execute_cgi(int client, const char *path, const char *method,
     }
     sprintf(buf, "HTTP/1.0 200 OK\r\n");
     send(client, buf, strlen(buf), 0);
+    
+    // 父进程和子进程分别执行以下逻辑，他们共享cgi_output和cgi_input
     if (pid == 0) /* child: CGI script */
     {
         char meth_env[255];
         char query_env[255];
         char length_env[255];
 
-        dup2(cgi_output[1], STDOUT);
-        dup2(cgi_input[0], STDIN);
+        dup2(cgi_output[1], STDOUT);  // 数据重定向，系统的标准输出 重定向到 子进程写端口
+        dup2(cgi_input[0], STDIN);  // 系统标准输入 来自 子进程读端口
+
         close(cgi_output[0]);
         close(cgi_input[1]);
+        
         sprintf(meth_env, "REQUEST_METHOD=%s", method);
+
+        printf("meth_env: %s\n", meth_env);  // 没有在console输出，是因为系统输出被重定向了，会在浏览器HTTP报文头部显示
+        
         putenv(meth_env);
         if (strcasecmp(method, "GET") == 0) {
             sprintf(query_env, "QUERY_STRING=%s", query_string);
+
+            printf("query_env: %s\n", query_env);
+            
             putenv(query_env);
         } else { /* POST */
             sprintf(length_env, "CONTENT_LENGTH=%d", content_length);
+
+            // 这也体现了多态嘛，同一个方法有不同的行为，视context而定
+            printf("length_env: %s\n", length_env);  // 同理，重定向到子进程管道写端口，被父进程读到，发送给client
+
             putenv(length_env);
         }
         execl(path, NULL);
@@ -273,8 +316,8 @@ void execute_cgi(int client, const char *path, const char *method,
         close(cgi_input[0]);
         if (strcasecmp(method, "POST") == 0)
             for (i = 0; i < content_length; i++) {
-                recv(client, &c, 1, 0);
-                write(cgi_input[1], &c, 1);
+                recv(client, &c, 1, 0);  // 网络读取
+                write(cgi_input[1], &c, 1);  // 进程通信
             }
         while (read(cgi_output[0], &c, 1) > 0) send(client, &c, 1, 0);
 
