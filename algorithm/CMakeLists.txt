@@ -31,3 +31,7 @@ leetcode/binary_tree/binarytree.cpp
 leetcode/binary_tree/main.cpp
 )
 
+add_executable(bubble_sort
+src/sort/bubble_sort.cpp
+)
+
