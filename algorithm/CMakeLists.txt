@@ -35,3 +35,8 @@ add_executable(bubble_sort
 src/sort/bubble_sort.cpp
 )
 
+add_executable(1705
+leetcode/map/1705.cpp
+)
+
+
