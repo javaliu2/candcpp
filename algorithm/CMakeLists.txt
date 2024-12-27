@@ -39,4 +39,8 @@ add_executable(1705
 leetcode/priority_queue/1705.cpp
 )
 
+add_executable(49
+leetcode/string/49.cpp
+)
+
 
