@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.10.0)
 project(cpp_with_algorithm)
 
 add_executable(3274

@@ -60,7 +60,7 @@ int eatenApples(vector<int>& apples, vector<int>& days) {
  * 2 hours, o(╥﹏╥)o, 66 / 73 个通过的测试用例, 超出时间限制
  * 这应该是选取的数据结构不合理，或者我的算法策略不够全面
  */
-int eatenApples(vector<int>& apples, vector<int>& days) {
+int eatenApples_my(vector<int>& apples, vector<int>& days) {
     int ans = 0;
     int n = apples.size();
     map<int, int> remain;  // 树上的苹果数量
