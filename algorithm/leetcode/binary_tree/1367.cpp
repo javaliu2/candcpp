@@ -43,17 +43,7 @@ public:
         } 
         return dfs(treenode->left, listnode) || dfs(treenode->right, listnode);
     }
-    bool dfs2(TreeNode* treenode, ListNode* listnode) {
-        if (listnode==nullptr) {
-            return true;
-        } else if (treenode == nullptr && listnode != nullptr) {
-            return false;
-        }
-        if (treenode->val == listnode->val) {
-            return dfs(treenode->left, listnode->next) || dfs(treenode->right, listnode->next);
-        } 
-        return dfs(treenode->left, listnode) || dfs(treenode->right, listnode);
-    }
+
     bool isSubPath(ListNode* head, TreeNode* root) {
         // 定义子问题：dfs(treenode, listnode)
         // 如果treenode.val == listnode.val，则dfs(treenode.left, listnode.next)||dfs(treenode.right, listnode.next)
