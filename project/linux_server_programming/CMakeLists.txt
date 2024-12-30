@@ -7,3 +7,15 @@ chapter5_basic_api/msg_oob_test_send.cpp
 add_executable(oob_recv
 chapter5_basic_api/msg_oob_test_recv.cpp
 )
+
+add_executable(recvbuf_server
+chapter5_basic_api/socket_recvbuf_test_server.cpp
+)
+
+add_executable(sendbuf_client
+chapter5_basic_api/socket_sendbuf_test_client.cpp
+)
+
+add_executable(access_daytime_service
+chapter5_basic_api/access_daytime_service.cpp
+)

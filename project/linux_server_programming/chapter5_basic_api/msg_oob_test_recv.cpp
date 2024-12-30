@@ -1,5 +1,9 @@
 /**
  * 代码清单5-7 接收带外数据
+ * 结果：
+ * got 5 bytes of normal data '123ab'
+ * got 1 bytes of oob data 'c'
+ * got 3 bytes of normal data '123'
  */
 
 #include <sys/socket.h>
