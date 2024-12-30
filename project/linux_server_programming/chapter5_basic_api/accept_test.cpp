@@ -1,18 +1,18 @@
-/** 
+/**
  * Liunx高性能服务器编程（游双）
  * 代码清单5-5 接受一个异常的连接
  * 实验现象：延迟20秒后服务器正常输出客户端连接的IP和端口号
  * 说明：accept只是从监听队列中取出连接，而不论该连接处于何种状态
-*/
-#include <sys/socket.h>
-#include <netinet/in.h>
+ */
 #include <arpa/inet.h>
 #include <assert.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
 #include <errno.h>
+#include <netinet/in.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 int main(int argc, char* argv[]) {
     // for (int i = 0; i < argc; i++) {
@@ -45,7 +45,9 @@ int main(int argc, char* argv[]) {
     } else {
         // 接收连接成功则打印客户端的IP地址和端口号
         char remote[INET_ADDRSTRLEN];
-        printf("connected with ip:%s and port:%d\n", inet_ntop(AF_INET, &client.sin_addr, remote, INET_ADDRSTRLEN), ntohs(client.sin_port));
+        printf("connected with ip:%s and port:%d\n",
+               inet_ntop(AF_INET, &client.sin_addr, remote, INET_ADDRSTRLEN),
+               ntohs(client.sin_port));
         close(connfd);
     }
     close(sock);

@@ -16,11 +16,3 @@ mystudy/pipe_test.cpp
 add_executable(httpd
 httpd.c
 )
-
-add_executable(backlog_test
-mystudy/backlog.cpp
-)
-
-add_executable(accept_test
-mystudy/accept_test.cpp
-)
