@@ -1,5 +1,6 @@
 /**
  * 代码清单6-5 同时输出数据到终端和文件的程序
+ * tee名字来源于T型管道，形象地表示了数据流在一个分支处分成两部分，用于不同的用途
  */
 #include <assert.h>
 #include <stdio.h>
@@ -33,8 +34,9 @@ int main(int argc, char* argv[]) {
     ret = splice(STDIN_FILENO, NULL, pipefd_stdout[1], NULL, 32768, SPLICE_F_MORE|SPLICE_F_MOVE);
     assert(ret != -1);
     
-    // 将管道pipefd_stdout的输出复制到管道pipefd_file的输入端
+    // 将管道pipefd_stdout的输出'复制'到管道pipefd_file的输入端
     ret = tee(pipefd_stdout[0], pipefd_file[1], 32768, SPLICE_F_NONBLOCK);
+    // ret = splice(pipefd_stdout[0], NULL, pipefd_file[1], NULL, 32768, SPLICE_F_MORE|SPLICE_F_MOVE);
     assert(ret != -1);
 
     // 将管道pipefd_file的输出定向到文件描述符filefd上，从而将标准输出内容写入文件
@@ -50,5 +52,6 @@ int main(int argc, char* argv[]) {
     close(pipefd_stdout[1]);
     close(pipefd_file[0]);
     close(pipefd_file[1]);
+    printf("close all fd");
     return 0;
 }

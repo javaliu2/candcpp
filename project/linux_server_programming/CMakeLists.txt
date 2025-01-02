@@ -43,3 +43,7 @@ chapter6_io_function/splice_test.cpp
 add_executable(tee_test
 chapter6_io_function/tee_test.cpp
 )
+
+add_executable(uid_test
+chapter7_server_specification/uid_test.cpp
+)
