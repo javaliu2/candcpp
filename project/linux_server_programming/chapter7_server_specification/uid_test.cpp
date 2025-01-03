@@ -13,4 +13,6 @@ int main() {
     // user_id is 1000, effective user_id is 1000
     printf("user_id is %d, effective user_id is %d\n", uid, euid);
     return 0;
+    int* a;
+    sizeof(a); // 8
 }

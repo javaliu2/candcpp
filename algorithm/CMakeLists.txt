@@ -44,4 +44,8 @@ add_executable(49
 leetcode/string/49.cpp
 )
 
+add_executable(729
+leetcode/set/729.cpp
+)
+
 
