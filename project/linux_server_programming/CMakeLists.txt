@@ -47,3 +47,11 @@ chapter6_io_function/tee_test.cpp
 add_executable(uid_test
 chapter7_server_specification/uid_test.cpp
 )
+
+add_executable(select_test
+chapter9_io_multiplexing/select_test.cpp
+)
+
+add_executable(send_oob_data
+chapter9_io_multiplexing/send_oob_data.cpp
+)
