@@ -55,3 +55,7 @@ chapter9_io_multiplexing/select_test.cpp
 add_executable(send_oob_data
 chapter9_io_multiplexing/send_oob_data.cpp
 )
+
+add_executable(LT_ET_test
+chapter9_io_multiplexing/LT_ET_test.cpp
+)
