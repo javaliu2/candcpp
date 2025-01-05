@@ -56,25 +56,28 @@ void addfd(int epollfd, int fd, bool enable_et) {
 /* LT模式的工作流程 */
 void lt( epoll_event* events, int number, int epollfd, int listenfd ) {
     char buf[BUFFER_SIZE];
+    printf( "in lt(), number of events is %d\n", number );
     for ( int i = 0; i < number; ++i ) {
         int sockfd = events[i].data.fd;
         if ( sockfd == listenfd ) {
             struct sockaddr_in client_addr;
             socklen_t client_addr_len = sizeof( client_addr );
             int connfd = accept( listenfd, ( struct sockaddr* )&client_addr, &client_addr_len );
+            printf( "in lt(), connfd is %d\n", connfd );
             addfd( epollfd, connfd, false );  /* 对 connfd 禁用 ET 模式*/
         } else if ( events[i].events & EPOLLIN ) {
+            printf( "in lt(), events[i].data.fd is %d\n", events[i].data.fd );
             /* 只要 socket 读缓存中还有未读出的数据，这段代码就被触发 */
-            printf("event trigger once\n");
+            printf( "in lt(), event trigger once\n" );
             memset( buf, '\0', BUFFER_SIZE );
             int ret = recv( sockfd, buf, BUFFER_SIZE-1, 0 );
-            if (ret <= 0) {
+            if ( ret <= 0 ) {
                 close( sockfd );        
                 continue;
             }
-            printf( "get %d bytes of content: %s\n", ret, buf );
+            printf( "in lt(), get %d bytes of content:_%s_\n", ret, buf );
         } else {
-           printf( "something else happened.\n" ); 
+           printf( "in lt(), something else happened.\n" ); 
         }
     }
 }
@@ -96,7 +99,7 @@ void et( epoll_event* events, int number, int epollfd, int listenfd ) {
                 int ret = recv( sockfd, buf, BUFFER_SIZE-1, 0 );
                 if ( ret < 0 ) {
                     /* 对于非阻塞 IO，下面的条件成立表示数据已经全部读取完毕，
-                    此后，epoll 就能再次触发 sockfd 上的 EPOLLIN 事件，以驱动一下次读操作*/
+                    此后，epoll 就能再次触发 sockfd 上的 EPOLLIN 事件，以驱动一下次读操作 */
                     if ( ( errno == EAGAIN ) || ( errno == EWOULDBLOCK ) ) {
                         printf( "read later.\n" );
                         break;
@@ -106,7 +109,7 @@ void et( epoll_event* events, int number, int epollfd, int listenfd ) {
                 } else if ( ret == 0 ) {
                     close( sockfd );
                 } else {
-                    printf( "get %d bytes of content: %s\n", ret, buf );
+                    printf( "get %d bytes of content: _%s_\n", ret, buf );
                 }
             }
         } else {
@@ -152,6 +155,9 @@ int main( int argc, char* argv[] ) {
 	
 	int listenfd = socket( PF_INET, SOCK_STREAM, 0 );
 	assert( listenfd >= 0 );
+    /* 设置端口可重用 */
+    int opt = 1;
+    setsockopt( listenfd, SOL_SOCKET, SO_REUSEADDR, (void*)&opt, sizeof(opt) );
 	ret = bind( listenfd, ( struct sockaddr* )&address, sizeof( address ) );
 	assert( ret != -1 );
 	ret = listen( listenfd, 5 );
@@ -168,7 +174,9 @@ int main( int argc, char* argv[] ) {
      */
     int epollfd = epoll_create( 5 );
     assert( epollfd != -1 );
+    // 注册服务器监听 socket_fd 上的 EPOLLIN 和 EPOLLET 事件
     addfd( epollfd, listenfd, true );
+    printf( "in main(), listenfd is %d\n", listenfd );
     while ( 1 ) {
         /**
          * Wait for events on an epoll instance "epfd". Returns the number of
@@ -181,11 +189,11 @@ int main( int argc, char* argv[] ) {
          */
         int ret = epoll_wait( epollfd, events, MAX_EVENT_NUMBER, -1 );
         if ( ret < 0 ) {
-            printf( "epoll failure.\n" );
+            printf( "in main(), epoll failure.\n" );
             break;
         }
-        lt( events, ret, epollfd, listenfd );  /* 使用LT模式 */
-        // et(events, ret, epollfd, listenfd ); /* 使用ET模式 */ 
+        //lt( events, ret, epollfd, listenfd );  /* 使用LT模式 */
+        et(events, ret, epollfd, listenfd ); /* 使用ET模式 */ 
     }
     close( listenfd );
     return 0;

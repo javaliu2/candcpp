@@ -48,3 +48,122 @@ typedef struct {
 ```
 
 ## 9.3 epoll系列系统调用
+
+### 1、函数原型
+
+```c
+int epoll_create(int size)  // 创建epollfd
+/* 对epfd指定内核事件表进行op操作，操作对象是fd上的事件events */
+int epoll_ctl(int epfd, int op, int fd, struct epoll_event* events) 
+/* 返回epfd指定内核事件表上发生的事件数量，将发生的事件存储于epoll_event结构体数组变量events中 */
+int epoll_wait(int epfd, epoll_event *events, int maxevents, int timeout)
+```
+
+epoll_event结构体的定义：
+
+```c
+typedef union epoll_data
+{
+  void *ptr;
+  int fd;
+  uint32_t u32;
+  uint64_t u64;
+} epoll_data_t;
+
+struct epoll_event
+{
+  uint32_t events;	/* Epoll events */
+  epoll_data_t data;	/* User data variable */
+} EPOLL_PACKED;
+```
+
+EPOLL_EVENTS如下所示:
+
+```c
+enum EPOLL_EVENTS {
+    EPOLLIN = 0x001,  // 二进制, 0...0, 0...0, 0...0, 00000001; 十进制, 1
+#define EPOLLIN EPOLLIN
+    EPOLLPRI = 0x002,  // 0...0, 0...0, 0...0, 000000010; 2
+#define EPOLLPRI EPOLLPRI
+    EPOLLOUT = 0x004,  // 0...0, 0...0, 0...0, 00000100; 4
+#define EPOLLOUT EPOLLOUT
+    EPOLLRDNORM = 0x040, // 0...0, 0...0, 0...0, 01000000; 64
+#define EPOLLRDNORM EPOLLRDNORM
+    EPOLLRDBAND = 0x080,  // 0...0, 0...0, 0...0, 10000000; 128
+#define EPOLLRDBAND EPOLLRDBAND
+    EPOLLWRNORM = 0x100,  // 0...0, 0...0, 00000001, 0...0; 256
+#define EPOLLWRNORM EPOLLWRNORM
+    EPOLLWRBAND = 0x200,  // 0...0, 0...0, 00000010, 0...0; 512
+#define EPOLLWRBAND EPOLLWRBAND
+    EPOLLMSG = 0x400,  // 0...0, 0...0, 00000100, 0...0; 1024
+#define EPOLLMSG EPOLLMSG
+    EPOLLERR = 0x008,  // 0...0, 0...0, 0...0, 00001000; 8
+#define EPOLLERR EPOLLERR
+    EPOLLHUP = 0x010,  // 0...0, 0...0, 0...0, 00010000; 16
+#define EPOLLHUP EPOLLHUP
+    EPOLLRDHUP = 0x2000,  // 0...0, 0...0, 00100000, 0...0; 8192
+#define EPOLLRDHUP EPOLLRDHUP
+    EPOLLEXCLUSIVE = 1u << 28,  // 00010000, 0...0, 0...0, 0...0; 2^28
+#define EPOLLEXCLUSIVE EPOLLEXCLUSIVE
+    EPOLLWAKEUP = 1u << 29,  // 00100000, 0...0, 0...0, 0...0; 2^29
+#define EPOLLWAKEUP EPOLLWAKEUP 
+    EPOLLONESHOT = 1u << 30,  // 01000000, 0...0, 0...0, 0...0; 2^30
+#define EPOLLONESHOT EPOLLONESHOT
+    EPOLLET = 1u << 31   // 10000000, 0...0, 0...0, 0...0; 2^31
+#define EPOLLET EPOLLET
+ };
+```
+
+### 2、telnet server
+
+#### 1) LT mode
+
+client input:
+
+```shell
+xs@xslab:~$ telnet 127.0.0.1 50000
+Trying 127.0.0.1...
+Connected to 127.0.0.1.
+Escape character is '^]'.
+hello lt and et learn
+```
+
+server output:
+
+```shell
+./LT_ET_test 127.0.0.1 50000
+in main(), listenfd is 3
+in lt(), number of events is 1  # client telnet trigger, listenfd上的事件
+in lt(), connfd is 5
+in lt(), number of events is 1  # 以下这四行是connfd上的事件
+in lt(), events[i].data.fd is 5
+in lt(), event trigger once
+in lt(), get 9 bytes of content:_hello et _
+in lt(), number of events is 1  # connfd上的事件，因为没有读取完connfd上的数据
+in lt(), events[i].data.fd is 5
+in lt(), event trigger once
+in lt(), get 9 bytes of content:_and lt le_
+in lt(), number of events is 1  # connfd上的事件，继续读取
+in lt(), events[i].data.fd is 5
+in lt(), event trigger once
+in lt(), get 5 bytes of content:_arn
+_ #\r\n, 所以换行之后才显示_
+# printf中的\n
+```
+
+#### 2) ET mode
+
+server output:
+
+```shell
+./LT_ET_test 127.0.0.1 50000
+in main(), listenfd is 3
+event trigger once.
+get 9 bytes of content: _hello et _
+get 9 bytes of content: _and lt le_
+get 5 bytes of content: _arn
+_
+read later.
+# printf \n
+```
+
