@@ -167,3 +167,44 @@ read later.
 # printf \n
 ```
 
+### 3、EPOLLONESHOT事件
+
+client input:
+
+```shell
+xs@xslab:~/clash$ telnet 127.0.0.1 50000
+Trying 127.0.0.1...
+Connected to 127.0.0.1.
+Escape character is '^]'.
+hello
+jjj  # 输入 'hello' 后5秒内输入 'jjj' 
+new data
+hahaah
+Connection closed by foreign host.  # server closed connection
+```
+
+server output:
+
+```shell
+./epolloneshot_test 127.0.0.1 50000
+start new thread 126484182206016 to receive data on fd: 5
+get content: hello
+
+get content: jjj  # 在5秒接收到新数据到来，还是当前的线程负责处理
+
+
+read later.
+end thread receiving data on fd: 5  # 继上次接收到数据后5秒内没有新数据的到来，结束该线程
+start new thread 126484100417088 to receive data on fd: 5
+get content: new data
+
+read later.
+end thread receiving data on fd: 5
+start new thread 126484089931328 to receive data on fd: 5
+get content: hahaah
+
+read later.
+end thread receiving data on fd: 5
+^C  # 结束主线程
+```
+

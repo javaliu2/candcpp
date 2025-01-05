@@ -59,3 +59,11 @@ chapter9_io_multiplexing/send_oob_data.cpp
 add_executable(LT_ET_test
 chapter9_io_multiplexing/LT_ET_test.cpp
 )
+
+add_executable(epolloneshot_test
+chapter9_io_multiplexing/epolloneshot_test.cpp
+)
+
+add_executable(pthread_test
+chapter9_io_multiplexing/pthread_test.cpp
+)
