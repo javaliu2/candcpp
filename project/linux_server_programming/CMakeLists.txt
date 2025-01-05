@@ -67,3 +67,11 @@ chapter9_io_multiplexing/epolloneshot_test.cpp
 add_executable(pthread_test
 chapter9_io_multiplexing/pthread_test.cpp
 )
+
+add_executable(chatroom_client
+chapter9_io_multiplexing/chatroom_client.cpp
+)
+
+add_executable(chatroom_server
+chapter9_io_multiplexing/chatroom_server.cpp
+)
