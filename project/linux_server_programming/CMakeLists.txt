@@ -75,3 +75,7 @@ chapter9_io_multiplexing/chatroom_client.cpp
 add_executable(chatroom_server
 chapter9_io_multiplexing/chatroom_server.cpp
 )
+
+add_executable(ptus_test
+chapter9_io_multiplexing/process_tcp_udp_simultaneously.cpp
+)
