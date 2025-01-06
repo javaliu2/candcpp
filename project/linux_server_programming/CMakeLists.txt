@@ -79,3 +79,7 @@ chapter9_io_multiplexing/chatroom_server.cpp
 add_executable(ptus_test
 chapter9_io_multiplexing/process_tcp_udp_simultaneously.cpp
 )
+
+add_executable(ues_test
+chapter10_signal/unified_event_source.cpp
+)
