@@ -208,3 +208,139 @@ end thread receiving data on fd: 5
 ^C  # 结束主线程
 ```
 
+## 9.8 超级服务xinetd
+
+x表示超级的意思，inet，互联网服务，d是单词daemon，即守护进程。
+
+```shell
+ps aux | grep xinetd
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+xs         15060  0.0  0.0  16236  4600 pts/5    S+   11:06   0:00 grep --color=auto xinetd
+# VSZ: 进程使用的虚拟内存大小(KB)
+# RSS: 进程使用的常驻内存大小(KB)
+# TTY: 进程关联的终端（如果有的话）
+# STAT: 进程状态（例如，R表示运行，S表示休眠）
+# START: 进程的启动时间
+# TIME: 进程占用的CPU时间
+```
+
+在 `ps` 命令中，`aux` 是常用的选项组合，用来显示系统中所有进程的信息。每个字母代表不同的含义：
+
+- **`a`**: 显示所有用户的进程，包括其他用户的进程（即非当前终端的进程）。
+- **`u`**: 显示进程的所属用户（用户列），即进程由哪个用户启动的。
+- **`x`**: 显示所有进程，包括没有控制终端的进程（例如守护进程和后台进程）。
+
+### 组合解释：
+
+- **`ps aux`**：会显示系统上所有进程的信息，包括每个进程的用户、PID（进程 ID）、CPU 使用率、内存使用率、启动时间、运行时间、命令等。
+
+```shell
+xs@xslab:~$ cat /var/run/xinetd.pid
+15858
+xs@xslab:~$ ps -eo pid,ppid,pgid,sid,comm|grep 15858
+  15858       1   15858   15858 xinetd
+xs@xslab:~$ ps -eo pid,ppid,pgid,sid,comm|grep 15858
+  15858       1   15858   15858 xinetd
+  17568   15858   17568   17568 in.telnetd
+xs@xslab:~$ sudo lsof -p 17568
+lsof: WARNING: can't stat() fuse.portal file system /run/user/1000/doc
+      Output information may be incomplete.
+COMMAND     PID    USER   FD   TYPE DEVICE SIZE/OFF  NODE NAME
+in.telnet 17568 telnetd  cwd    DIR  259,2     4096     2 /
+in.telnet 17568 telnetd  rtd    DIR  259,2     4096     2 /
+in.telnet 17568 telnetd  txt    REG  259,2    56000 79491 /usr/sbin/in.telnetd
+in.telnet 17568 telnetd  mem    REG  259,2    18664 11125 /usr/lib/x86_64-linux-gnu/libnss_mdns4_minimal.so.2
+in.telnet 17568 telnetd  mem    REG  259,2  2220400  5995 /usr/lib/x86_64-linux-gnu/libc.so.6
+in.telnet 17568 telnetd  mem    REG  259,2   240936  5964 /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+in.telnet 17568 telnetd    0u  IPv4 299686      0t0   TCP localhost:telnet->localhost:35250 (ESTABLISHED)
+in.telnet 17568 telnetd    1u  IPv4 299686      0t0   TCP localhost:telnet->localhost:35250 (ESTABLISHED)
+in.telnet 17568 telnetd    2u  IPv4 299686      0t0   TCP localhost:telnet->localhost:35250 (ESTABLISHED)
+in.telnet 17568 telnetd    3u   CHR    5,2      0t0    87 /dev/ptmx
+
+```
+
+### G-bro summary:
+
+在 Linux 和类 Unix 系统中，进程管理非常重要，理解进程的各个标识符对系统管理和调试非常有帮助。你提到的 `pid`, `ppid`, `pgid`, `sid`, `comm` 都是与进程相关的标识符。以下是这些字段的详细说明：
+
+#### 1. **PID (Process ID)**
+
+- **全称**: Process ID（进程标识符）
+- **描述**: 每个正在运行的进程都有一个唯一的进程 ID（PID），它是操作系统用来识别进程的数字标识。
+- **作用**: 通过 PID，操作系统可以区分不同的进程。每当启动一个新进程时，操作系统分配一个唯一的 PID。
+
+**示例**：
+
+```bash
+ps aux | grep <进程名>
+```
+
+输出中会显示进程的 PID。
+
+#### 2. **PPID (Parent Process ID)**
+
+- **全称**: Parent Process ID（父进程标识符）
+- **描述**: 父进程的 PID，表示当前进程是由哪个进程创建的。每个进程除了初始化进程（PID 为 1）外，都会有一个父进程。
+- **作用**: 通过 PPID，操作系统能够建立进程间的层级关系，了解哪个进程创建了当前进程。
+
+**示例**：
+
+```bash
+ps -ef
+```
+
+其中，`PPID` 显示了父进程的 PID。
+
+#### 3. **PGID (Process Group ID)**
+
+- **全称**: Process Group ID（进程组标识符）
+- **描述**: 进程组 ID 是一组相关进程的标识符，通常用于将一组进程当作一个单元来管理。在 Unix 和 Linux 系统中，一组进程可以共同组成一个进程组，进程组内的所有进程共享同一个 PGID。
+- **作用**: PGID 常用于作业控制和信号传递等场景。例如，发送信号给整个进程组（而不仅仅是单个进程）。
+
+**示例**：
+
+```bash
+ps -eo pid,pgid,comm
+```
+
+输出会显示每个进程的 PID 和 PGID。
+
+#### 4. **SID (Session ID)**
+
+- **全称**: Session ID（会话标识符）
+- **描述**: 会话 ID 是与一组进程相关的标识符。会话通常包含一个或多个进程组，通常用于管理终端会话。每个会话由一个会话领导进程（通常是该会话中的第一个进程）发起。
+- **作用**: SID 用于管理和控制会话中的进程。例如，在 Linux 中，当你登录时，登录进程会成为会话的领导进程，其他进程（如 shell、应用程序等）都将属于同一个会话。
+
+**示例**：
+
+```bash
+ps -eo pid,sid,comm
+```
+
+输出会显示每个进程的 PID 和 SID。
+
+#### 5. **COMM (Command Name)**
+
+- **全称**: Command Name（命令名）
+- **描述**: 进程的命令名称，即启动该进程时的可执行文件名。它是进程所执行的程序的名称，不包括路径。
+- **作用**: `comm` 字段表示进程的可执行文件名。它通常用于识别运行的程序。
+
+**示例**：
+
+```bash
+ps -eo pid,comm
+```
+
+输出会显示每个进程的 PID 和命令名称。
+
+------
+
+#### 总结：
+
+- **PID**：进程的唯一标识符。
+- **PPID**：父进程的 PID，表示当前进程是由哪个进程创建的。
+- **PGID**：进程组的标识符，表示一组相关进程。
+- **SID**：会话的标识符，表示与终端会话相关的进程。
+- **COMM**：进程的命令名称，表示启动该进程时的可执行文件名。
+
+这些标识符在进程管理和调试中非常有用，可以帮助你理解进程的层级关系、控制进程组、会话等。
