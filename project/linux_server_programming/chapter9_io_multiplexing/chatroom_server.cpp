@@ -61,7 +61,7 @@ int main ( int argc, char* argv[] ) {
      * 书中说“并且使用牺牲空间换取时间的策略来提高服务器性能”这句话，就体现在这里
      */
     client_data* users = new client_data[FD_LIMIT];
-    // users成员变量的默认值, 结构体address中的成员变量都为0, write_buf为0x0, 即nullper, buf也都为0 
+    // users成员变量的默认值, 结构体address中的成员变量都为0, write_buf为0x0, 即nullptr, buf也都为0 
     printf( "write_buf ?= nuppter, %d\n", users[10].write_buf == nullptr );  // 1 == ture
     /* 尽管我们分配了足够多的 client_data 对象，但为了提高 poll 的性能，任然有必要限制用户的数量 */
     pollfd fds[USER_LIMIT+1];
@@ -146,7 +146,8 @@ int main ( int argc, char* argv[] ) {
                         if ( fds[j].fd == connfd ) {
                             continue;
                         }
-                        fds[j].events |= ~POLLIN;
+                        // fds[j].events |= ~POLLIN;  // 书中的代码，我觉得有问题
+                        fds[j].events &= ~POLLIN;  // 清除一个事件的正确操作
                         fds[j].events |= POLLOUT;
                         users[fds[j].fd].write_buf = users[connfd].buf;
                     } 
@@ -159,7 +160,8 @@ int main ( int argc, char* argv[] ) {
                 ret = send( connfd, users[connfd].write_buf, strlen( users[connfd].write_buf ), 0 );
                 users[connfd].write_buf = nullptr;
                 /* 写完数据后需要重新注册 fds[i] 上的可读事件 */
-                fds[i].events |= ~POLLOUT;
+                // fds[i].events |= ~POLLOUT;  // 和上面同理
+                fds[i].events &= ~POLLOUT; 
                 fds[i].events |= POLLIN;
             }
         }
