@@ -83,3 +83,7 @@ chapter9_io_multiplexing/process_tcp_udp_simultaneously.cpp
 add_executable(ues_test
 chapter10_signal/unified_event_source.cpp
 )
+
+add_executable(sot
+chapter10_signal/sigurg_oob_test.cpp
+)
