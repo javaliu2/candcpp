@@ -87,3 +87,7 @@ chapter10_signal/unified_event_source.cpp
 add_executable(sot
 chapter10_signal/sigurg_oob_test.cpp
 )
+
+add_executable(stlt
+chapter11_timer/sorted_timer_list_test.cpp   
+)
