@@ -91,3 +91,7 @@ chapter10_signal/sigurg_oob_test.cpp
 add_executable(stlt
 chapter11_timer/sorted_timer_list_test.cpp   
 )
+
+add_executable(cnac
+chapter11_timer/close_nonactivity_connection.cpp   
+)

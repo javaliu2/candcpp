@@ -66,8 +66,8 @@ void addsig(int sig) {
 void timer_handler() {
     /* 定时处理任务，其实就是调用tick函数 */
     timer_list.tick();
-    /* 因为一次alarm调用只会引起一次SIGALRM信号，
-    所以我们要重新定时，以不断触发SIGALRM信号*/
+    /* 因为一次 alarm 调用只会引起一次 SIGALRM 信号，
+    所以我们要重新定时，以不断触发 SIGALRM 信号 */
     alarm(TIMESLOT);
 }
 
@@ -105,7 +105,7 @@ int main(int argc, char* argv[]) {
     assert(epollfd != -1);
     addfd(epollfd, listenfd);
 
-    ret = socketpair(PF_INET, SOCK_STREAM, 0, pipefd);
+    ret = socketpair(PF_UNIX, SOCK_STREAM, 0, pipefd);  // 本机上socket通信
     assert(ret != -1);
     setnonblocking(pipefd[1]);
     addfd(epollfd, pipefd[0]);
@@ -116,6 +116,7 @@ int main(int argc, char* argv[]) {
     bool stop_server = false;
     client_data* users = new client_data[FD_LIMIT];
     bool timeout = false;
+    /* alarm 负责发送 SIGALRM 信号 */
     alarm(TIMESLOT); /* 定时 */
 
     while (!stop_server) {
