@@ -48,4 +48,8 @@ add_executable(729
 leetcode/set/729.cpp
 )
 
+add_executable(min_heap_test
+src/heap/min_heap_test.cpp src/heap/min_heap_array_impl.cpp
+)
+
 
