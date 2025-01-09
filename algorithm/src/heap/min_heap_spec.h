@@ -8,7 +8,7 @@ class MinHeap {
     public:
         virtual ~MinHeap() = default;
         virtual void add(int value) = 0;
-        virtual int remove() = 0;
+        virtual void remove() = 0;
         virtual int peek() const = 0;
         virtual bool isEmpty() const = 0;
         virtual int size() const = 0;

@@ -20,7 +20,7 @@ class ArrayMinHeap : public MinHeap {
         ArrayMinHeap();
         ArrayMinHeap(std::vector<int>& data);
         virtual void add(int value) override;
-        virtual int remove() override;
+        virtual void remove() override;
         virtual int peek() const override;
         virtual bool isEmpty() const override;
         virtual int size() const override;

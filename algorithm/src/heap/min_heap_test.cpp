@@ -21,12 +21,13 @@ int main() {
     //     cout << e << " ";
     // }
     int cnt = 10;
+    const int RANGE = 50;
     while (cnt--) {
-        int number = random() % 40;
+        int number = random() % RANGE;
         cout << "number: " << number << endl;
         ArrayMinHeap min_heap;
         while (number--) {
-            int element = random() % 40 - 20;
+            int element = random() % RANGE - RANGE / 2;
             min_heap.add(element);
         }
         // min_heap.bfs();

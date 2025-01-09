@@ -1,5 +1,6 @@
 #include "min_heap_array_impl_spec.h"
 #include <vector>
+
 void ArrayMinHeap::heapifyUp(int i) {
     /**
      * 判断heap[i]与其父节点值f_v的大小
@@ -73,22 +74,30 @@ void ArrayMinHeap::add(int value) {
     heapifyUp(end);
 }
 
-int ArrayMinHeap::remove() {
+void ArrayMinHeap::remove() {
     /**
-     * 返回最小值
+     * 不返回值，如果需要最小值，那么请先调用peek函数
      * 将最后一个节点置于根节点，调用heapifyDown调整整棵树
      * 
      */
-    int tmp = heap[0];
+    if (isEmpty()) {
+        throw std::runtime_error("heap is empty");
+    }
     int end = heap.size() - 1;
     heap[0] = heap[end];
     // delete heap[end]
     heap.pop_back(); // 该方法是否会调用对象的析构函数
     heapifyDown(0);
-    return tmp;
 }
 
 int ArrayMinHeap::peek() const {
+    /**
+     * 不好返回-1，因为堆中元素包括负数的话，-1有可能是元素，这样就有歧义了
+     * 所以抛出异常是比较明智的做法
+     */
+    if (isEmpty()) {
+        throw std::runtime_error("heap is empty");
+    }
     return heap[0];
 }
 bool ArrayMinHeap::isEmpty() const {
@@ -124,7 +133,8 @@ void ArrayMinHeap::bfs() const {
 
 void ArrayMinHeap::print() {
     while (!isEmpty()) {
-        int top_ele = remove();
+        int top_ele = peek();
+        remove();
         std::cout << top_ele << " ";
     }
     std::cout << std::endl;
