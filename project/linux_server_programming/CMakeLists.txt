@@ -95,3 +95,13 @@ chapter11_timer/sorted_timer_list_test.cpp
 add_executable(cnac
 chapter11_timer/close_nonactivity_connection.cpp   
 )
+add_executable(hello_libevent
+chapter12_libevent/hello_libevent.cpp
+)
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(LIBEVENT REQUIRED libevent)
+
+target_include_directories(hello_libevent PRIVATE ${LIBEVENT_INCLUDE_DIRS})
+target_link_libraries(hello_libevent PRIVATE ${LIBEVENT_LIBRARIES})
+
