@@ -3,6 +3,9 @@ using namespace std;
 
 class Solution {
 public:
+    /**
+     * dynamic programming
+     */
     int trap_dp(vector<int>& height) {
         int n = height.size(), ans = 0;
         vector<int> left_max(n), right_max(n);
@@ -17,25 +20,23 @@ public:
         }
         return ans;
     }
-    int trap(vector<int>& height) {
+    /**
+     * descending stack
+     */
+    int trap_ds(vector<int>& height) {
         stack<int> s;
         int ans = 0;
         for (int i = 0; i < height.size(); i++) {
-            if (s.size() >= 2) {
-                while (!s.empty() && height[s.top()] < height[i]) {
-                    int top_idx = s.top(), left_idx;
-                    if (height[i] > height[top_idx]) {
-                        s.pop();
-                        left_idx = s.top();
-                        ans += (i - left_idx - 1) * (min(height[left_idx], height[i]) - height[top_idx]);
-                    }
+            while (!s.empty() && height[s.top()] < height[i]) {
+                int top_idx = s.top(), left_idx;
+                s.pop();
+                if (s.empty()) {
+                    break;
                 }
+                left_idx = s.top();
+                ans += (i - left_idx - 1) * (min(height[left_idx], height[i]) - height[top_idx]);
             }
-            if (s.empty()) {
-                s.push(i);
-            } else if (height[s.top()] >= height[i]) {
-                s.push(i);
-            }
+            s.push(i);
         }
         return ans;
     }
