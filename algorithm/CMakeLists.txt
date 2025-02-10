@@ -56,4 +56,8 @@ add_executable(438
 leetcode/sliding_window/438.cpp
 )
 
+add_executable(26
+leetcode/array/26.cpp
+)
+
 

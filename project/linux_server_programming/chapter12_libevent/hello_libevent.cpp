@@ -1,8 +1,8 @@
 /**
  * 代码清单12-1 Libevent实例
  */
-#include<stdio.h>
-#include<event2/event.h>
+#include <stdio.h>
+#include <event2/event.h>
 #include <sys/signal.h>
 
 void signal_cb(int fd, short event, void* argc) {
