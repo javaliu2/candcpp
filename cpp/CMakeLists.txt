@@ -28,3 +28,11 @@ src/fraction.cpp src/student.cpp entry/type_cast.cpp)
 add_executable(vector_test
 header/vector.h entry/vector_test.cpp src/student.cpp
 )
+
+add_executable(1_create_thread
+thread/1_create_thread.cpp
+)
+
+add_executable(2_variable_pass
+thread/2_variable_pass.cpp
+)

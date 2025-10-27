@@ -1,4 +1,5 @@
 project(study_server_programming)
+cmake_minimum_required(VERSION 3.22)
 
 add_executable(oob_send
 chapter5_basic_api/msg_oob_test_send.cpp
@@ -14,6 +15,14 @@ chapter5_basic_api/socket_recvbuf_test_server.cpp
 
 add_executable(sendbuf_client
 chapter5_basic_api/socket_sendbuf_test_client.cpp
+)
+
+add_executable(backlog_test
+chapter5_basic_api/backlog_test.cpp
+)
+
+add_executable(accept_test
+chapter5_basic_api/accept_test.cpp
 )
 
 add_executable(access_daytime_service
