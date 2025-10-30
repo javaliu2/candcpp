@@ -36,3 +36,17 @@ thread/1_create_thread.cpp
 add_executable(2_variable_pass
 thread/2_variable_pass.cpp
 )
+
+add_executable(stack_and_heap
+src/stack_and_heap.cpp
+)
+
+add_executable(useless_main
+header/useless.h entry/useless_main.cpp src/useless.cpp
+)
+
+add_executable(3_mutex
+thread/3_mutex.cpp
+)
+add_executable(4_single_instance
+thread/4_single_instance.cpp)
