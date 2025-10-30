@@ -21,10 +21,10 @@ public:
 };
 
 int main() {
-    Log log1 = Log::getInstance();
-    cout << "log1 address: " << &log1 << endl;
-    Log log2 = Log::getInstance();
-    cout << "log2 address: " << &log2 << endl;
+    // Log log1 = Log::getInstance();
+    // cout << "log1 address: " << &log1 << endl;
+    // Log log2 = Log::getInstance();
+    // cout << "log2 address: " << &log2 << endl;
     // output:
     // log1 address: 0x7ffe97831986
     // log2 address: 0x7ffe97831987
