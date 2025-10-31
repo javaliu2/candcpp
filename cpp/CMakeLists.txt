@@ -50,3 +50,6 @@ thread/3_mutex.cpp
 )
 add_executable(4_single_instance
 thread/4_single_instance.cpp)
+
+add_executable(5_producer_consumer
+thread/5_producer_consumer.cpp)
