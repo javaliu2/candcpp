@@ -56,3 +56,9 @@ thread/5_producer_consumer.cpp)
 
 add_executable(reference
 src/reference.cpp)
+
+add_executable(vector_emplace
+src/vector_emplace.cpp)
+
+add_executable(6_thread_pool
+thread/6_thread_pool.cpp)
