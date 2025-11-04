@@ -53,3 +53,6 @@ thread/4_single_instance.cpp)
 
 add_executable(5_producer_consumer
 thread/5_producer_consumer.cpp)
+
+add_executable(reference
+src/reference.cpp)
