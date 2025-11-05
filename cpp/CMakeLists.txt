@@ -62,3 +62,6 @@ src/vector_emplace.cpp)
 
 add_executable(6_thread_pool
 thread/6_thread_pool.cpp)
+
+add_executable(functional_test
+src/functional_test.cpp)
