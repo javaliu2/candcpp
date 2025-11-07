@@ -1,0 +1,15 @@
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <stdlib.h>
+#include <strings.h>
+#include <stdio.h>
+
+int main() {
+    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    struct sockaddr_in serv_addr;  // 服务器socket地址
+    bzero(&serv_addr, sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    serv_addr.sin_port = htons(8888);
+    connect(sockfd, (sockaddr*)&serv_addr, sizeof(serv_addr));
+}

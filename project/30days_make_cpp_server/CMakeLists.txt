@@ -1,3 +1,9 @@
 add_executable(1_server
 1_basic_socket_communication/server.cpp
 )
+add_executable(1_client
+1_basic_socket_communication/client.cpp
+)
+add_executable(1_host_net_order
+1_basic_socket_communication/host_net_order.cpp
+)
