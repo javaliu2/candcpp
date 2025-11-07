@@ -1,0 +1,3 @@
+add_executable(1_server
+1_basic_socket_communication/server.cpp
+)
