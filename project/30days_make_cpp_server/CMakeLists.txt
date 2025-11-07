@@ -1,3 +1,4 @@
+project(30days_make_cpp_server)
 add_executable(1_server
 1_basic_socket_communication/server.cpp
 )
@@ -7,3 +8,9 @@ add_executable(1_client
 add_executable(1_host_net_order
 1_basic_socket_communication/host_net_order.cpp
 )
+
+add_executable(2_server
+2_say_hello/server.cpp 2_say_hello/util.cpp)
+
+add_executable(2_client
+2_say_hello/client.cpp 2_say_hello/util.cpp)
