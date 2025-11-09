@@ -29,3 +29,11 @@ add_executable(3_server_nonblock
 add_executable(3_server
 3_epoll/server.cpp 3_epoll/util.cpp
 )
+
+add_executable(4_server
+4_hello_class/server.cpp 4_hello_class/Epoll.cpp 4_hello_class/Socket.cpp 4_hello_class/InetAddress.cpp 4_hello_class/util.cpp
+)
+
+add_executable(4_client
+4_hello_class/client.cpp 4_hello_class/util.cpp
+)
