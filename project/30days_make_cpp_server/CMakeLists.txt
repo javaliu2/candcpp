@@ -14,3 +14,14 @@ add_executable(2_server
 
 add_executable(2_client
 2_say_hello/client.cpp 2_say_hello/util.cpp)
+
+add_executable(3_client
+3_epoll/client.cpp 3_epoll/util.cpp)
+
+add_executable(3_server_block
+3_epoll/server_block.cpp 3_epoll/util.cpp
+)
+
+add_executable(3_server_nonblock
+3_epoll/server_nonblock.cpp 3_epoll/util.cpp
+)
