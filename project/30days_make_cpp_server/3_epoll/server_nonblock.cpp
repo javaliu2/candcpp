@@ -10,8 +10,11 @@
 #include <sys/epoll.h>
 #include <fcntl.h>
 
-void setnonblocking(int fd) {
-    fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK);
+int setnonblocking(int fd) {
+    int old_flags = fcntl(fd, F_GETFL);  // 数值2对应，O_RDWR，可读写
+    int new_flags = old_flags | O_NONBLOCK;  // O_NONBLOCK: 04000(八进制)
+    fcntl(fd, F_SETFL, new_flags);
+    return old_flags;
 }
 
 int main () {
@@ -39,14 +42,17 @@ int main () {
     socklen_t client_addr_len = sizeof(client_addr);
     bzero(&client_addr, client_addr_len);
 
-    setnonblocking(sockfd);  // 设置监听socket为非阻塞
+    // setnonblocking(sockfd);  // 设置监听socket为非阻塞
     printf("waiting for client connnect\n");
     int client_socket_fd = accept(sockfd, (sockaddr*)&client_addr, &client_addr_len);
     errif(client_socket_fd == -1, "socket accept error");
     printf("client fd: %d\n", client_socket_fd);
     
     char buf[1024];
-    setnonblocking(client_socket_fd);  // 设置通信socket为非阻塞
+    int csfd_old_flags = setnonblocking(client_socket_fd);  // 设置通信socket为非阻塞
+    printf("client socket fd old file flags: %d\n", csfd_old_flags);  // 2
+    int new_flags = fcntl(client_socket_fd, F_GETFL);
+    printf("client socket fd new file flags: %d\n", new_flags);  // 
     int n = read(client_socket_fd, buf, sizeof(buf));
     if (n == -1 && errno == EAGAIN) {
         printf("现在没有数据，请稍后再试\n");

@@ -25,3 +25,7 @@ add_executable(3_server_block
 add_executable(3_server_nonblock
 3_epoll/server_nonblock.cpp 3_epoll/util.cpp
 )
+
+add_executable(3_server
+3_epoll/server.cpp 3_epoll/util.cpp
+)

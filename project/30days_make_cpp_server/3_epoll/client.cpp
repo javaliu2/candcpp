@@ -18,7 +18,9 @@ int main () {
 
     int ret = connect(sockfd, (sockaddr*)&sock_addr, sizeof(sock_addr));
     errif(ret == -1, "client socket connect error");
-    
+    if (ret == 0) {
+        printf("connect success\n");
+    }
     while(true){
         char buf[1024];
         bzero(&buf, sizeof(buf));
