@@ -17,11 +17,21 @@ InetAddress::InetAddress(const char* ip, uint16_t port) : addr_len(sizeof(addr))
     addr.sin_port = htons(port);
 }
 
-InetAddress::~InetAddress() {
-
+InetAddress::InetAddress(const InetAddress& other) : addr(other.addr), addr_len(other.addr_len) {
+    // addr = other.getSockAddr();  // 不必要，因为这里在类的成员函数里，可以直接访问other.addr的成员变量
+    // addr = other.addr;  // 结构体默认按值拷贝
+    // addr_len = other.addr_len;
 }
 
-const sockaddr* InetAddress::getSockAddr() const{
+InetAddress& InetAddress::operator=(const InetAddress& other) {
+    if (this != &other) {
+        addr = other.addr;
+        addr_len = other.addr_len;
+    }
+    return *this;
+}
+
+const sockaddr* InetAddress::getSockAddr() const {
     return (sockaddr*)&addr;
 }
 

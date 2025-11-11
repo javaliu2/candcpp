@@ -1,49 +1,34 @@
 #include "Epoll.h"
-#include "util.h"
-#include <unistd.h>
-#include <string.h>
+#include "BaseSocket.h"
+#include <stdexcept>
+#include <iostream>
+#include <cstring>
 
-#define MAX_EVENTS 1024
-
-Epoll::Epoll() : epfd(-1), events(nullptr) {
+Epoll::Epoll() {
     epfd = epoll_create1(0);
-    errif(epfd == -1, "epoll create error");
-    events = new epoll_event[MAX_EVENTS];
-    // sizeof(events[0].data);  // 8 bytes
-    // sizeof(events[0].events);  // 4 bytes
-    bzero(events, sizeof(*events) * MAX_EVENTS);  // 16 bytes，可能有内存对齐
+    if (epfd == -1) throw std::runtime_error("epoll_create1 failed");
+    events.resize(MAX_EVENTS);
 }
 
 Epoll::~Epoll() {
-    if (epfd != -1) {
-        close(epfd);
-        epfd = -1;
-    }
-    delete[] events;
+    if (epfd != -1) close(epfd);
 }
 
-void Epoll::addFd(int fd, uint32_t op, void* ptr) {
-    struct epoll_event ev;
-    bzero(&ev, sizeof(ev));
-    ev.data.fd = fd;
-    if (ptr != nullptr) {
-        ev.data.ptr = ptr;
+void Epoll::addBaseSocket(BaseSocket* baseSocket, uint32_t eventMask) {
+    epoll_event ev{};
+    ev.events = eventMask;
+    ev.data.ptr = baseSocket;
+    if (epoll_ctl(epfd, EPOLL_CTL_ADD, baseSocket->getFd(), &ev) == -1) {
+        throw std::runtime_error("epoll_ctl add failed");
     }
-    ev.events = op;
-    errif(-1 == epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &ev), "epoll add event error");
 }
 
-void Epoll::removeFd(int fd) {
-    if (fd != -1) {
-        ::close(fd);
-    }
+void Epoll::removeBaseSocket(BaseSocket* baseSocket) {
+    epoll_ctl(epfd, EPOLL_CTL_DEL, baseSocket->getFd(), nullptr);
 }
+
 std::vector<epoll_event> Epoll::poll(int timeout) {
-    std::vector<epoll_event> activeEvents;
-    int nfds = epoll_wait(epfd, events, MAX_EVENTS, timeout);
-    errif(nfds == -1, "epoll wait error");
-    for (int i = 0; i < nfds; ++i) {
-        activeEvents.push_back(events[i]);
-    }
-    return activeEvents;
+    int n = epoll_wait(epfd, events.data(), MAX_EVENTS, timeout);
+    if (n == -1) throw std::runtime_error("epoll_wait failed");
+    return std::vector<epoll_event>(events.begin(), events.begin() + n);
 }

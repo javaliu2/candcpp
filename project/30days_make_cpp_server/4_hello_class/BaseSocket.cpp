@@ -2,7 +2,9 @@
 #include <iostream>
 
 BaseSocket::BaseSocket() {
-    fd == ::socket(AF_INET, SOCK_STREAM, 0);
+    // fd == ::socket(AF_INET, SOCK_STREAM, 0); // bug error, this is comparator operator
+    // 相当于进行比较，而忽略比较的结果
+    fd = ::socket(AF_INET, SOCK_STREAM, 0);
     if (fd == -1) {
         perror("BaseSocket::BaseSocket() create socket error");
         throw std::runtime_error("BaseSocket::BaseSocket() create socket failed");

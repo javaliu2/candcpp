@@ -31,9 +31,9 @@ add_executable(3_server
 )
 
 add_executable(4_server
-4_hello_class/server.cpp 4_hello_class/Epoll.cpp 4_hello_class/Socket.cpp 4_hello_class/InetAddress.cpp 4_hello_class/util.cpp
+4_hello_class/server.cpp 4_hello_class/Epoll.cpp 4_hello_class/BaseSocket.cpp 4_hello_class/ServerSocket.cpp 4_hello_class/ClientSocket.cpp 4_hello_class/InetAddress.cpp 4_hello_class/util.cpp
 )
 
 add_executable(4_client
-4_hello_class/client.cpp 4_hello_class/util.cpp
+4_hello_class/client.cpp 4_hello_class/BaseSocket.cpp 4_hello_class/ClientSocket.cpp 4_hello_class/InetAddress.cpp 4_hello_class/util.cpp
 )
