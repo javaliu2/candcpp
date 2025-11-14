@@ -19,7 +19,7 @@ void Channel::setReadCallback(const std::function<void()>& cb) {
 }
 
 void Channel::enableReading() {
-    events |= EPOLLIN;
+    events = EPOLLIN | EPOLLET; // 边沿触发
     loop->updateChannel(this);
 }
 

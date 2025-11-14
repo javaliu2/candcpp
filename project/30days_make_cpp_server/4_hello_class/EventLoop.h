@@ -1,6 +1,7 @@
 #pragma once
-class Epoll;
-class Channel;
+#include "Epoll.h"
+#include "Channel.h"
+
 class EventLoop {
 private:
     Epoll* epoll;

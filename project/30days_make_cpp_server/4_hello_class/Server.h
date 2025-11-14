@@ -1,10 +1,12 @@
 #pragma once
+#include "EventLoop.h"
+#include "ServerSocket.h"
+#include "Acceptor.h"
 
-class EventLoop;
-class ServerSocket;
 class Server {
 private:
     EventLoop* loop;
+    Acceptor* acceptor;
 public:
     Server(EventLoop* loop);
     ~Server();

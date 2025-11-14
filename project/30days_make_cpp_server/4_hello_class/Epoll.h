@@ -2,8 +2,8 @@
 #include <sys/epoll.h>
 #include <vector>
 #include "BaseSocket.h"
+#include "Channel.h"
 
-class Channel;
 class Epoll {
 private:
     int epfd;

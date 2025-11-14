@@ -32,8 +32,15 @@ add_executable(3_server
 
 add_executable(4_server
 4_hello_class/server.cpp 4_hello_class/Epoll.cpp 4_hello_class/BaseSocket.cpp 4_hello_class/ServerSocket.cpp 4_hello_class/ClientSocket.cpp 4_hello_class/InetAddress.cpp 4_hello_class/util.cpp
-)
+4_hello_class/Channel.cpp 4_hello_class/EventLoop.cpp)  
+# 因为修改了Epoll, 新增了Channel, 所以要把Channel.cpp加上, Channel又涉及到EventLoop, 所以EventLoop.cpp也要加上, 否则会编译报错，显示找不到函数的定义
 
 add_executable(4_client
 4_hello_class/client.cpp 4_hello_class/BaseSocket.cpp 4_hello_class/ClientSocket.cpp 4_hello_class/InetAddress.cpp 4_hello_class/util.cpp
 )
+
+add_executable(4_server2
+4_hello_class/EventLoop.cpp 4_hello_class/Channel.cpp 4_hello_class/Server.cpp
+4_hello_class/server2.cpp 4_hello_class/Epoll.cpp 4_hello_class/BaseSocket.cpp 
+4_hello_class/ServerSocket.cpp 4_hello_class/ClientSocket.cpp 4_hello_class/InetAddress.cpp 
+4_hello_class/util.cpp 4_hello_class/Acceptor.cpp)

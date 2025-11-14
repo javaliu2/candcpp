@@ -8,19 +8,19 @@
 #include <unistd.h>
 #include <iostream>
 
-Server::Server(EventLoop* loop) : loop(loop) {
-    InetAddress serverAddr("127.0.0.1", 8888);
-    ServerSocket* serverSocket = new ServerSocket(serverAddr);  // 完成绑定和监听
-    serverSocket->setNonBlocking(true);
-    Channel* channel = new Channel(loop, serverSocket->getFd());
-    channel->setReadCallback(std::bind(&Server::handleNewConnection, this, serverSocket));
-    channel->enableReading();
+Server::Server(EventLoop* loop) : loop(loop), acceptor(nullptr) {
+    acceptor = new Acceptor(loop);
+    acceptor->setNewConnectionCallback(
+        std::bind(&Server::handleNewConnection, this, std::placeholders::_1)
+    );
 }
 
-Server::~Server() {}
+Server::~Server() {
+    delete acceptor;
+    delete loop;
+}
 
 void Server::handleNewConnection(ServerSocket* serverSocket) {
-    InetAddress clientAddr;
     ClientSocket* clientSocket = serverSocket->accept();
     std::cout << "New client connected from " 
               << clientSocket->getAddress().getIp() << ":"
@@ -45,13 +45,14 @@ void Server::handleRead(int clientFd) {
         } else if (n == 0) {
             std::cout << "Client fd " << clientFd << " disconnected." << std::endl;
             close(clientFd);
+            break;
         } else if (n == -1 && errno == EAGAIN) {
             // No more data to read
             std::cout << "All data read from client fd " << clientFd << std::endl;
             break;
-        } else {
-            std::cerr << "Read error on client fd " << clientFd << std::endl;
-            close(clientFd);
+        } else if (n == -1 && errno == EINTR) {
+            std::cout << "Read interrupted for client fd " << clientFd << ", retrying." << std::endl;
+            continue; // Interrupted, retry
         }
     }
 }
