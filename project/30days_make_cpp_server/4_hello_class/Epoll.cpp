@@ -51,6 +51,7 @@ void Epoll::updateChannel(Channel* channel) {
         if (epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &ev) == -1) {
             throw std::runtime_error("epoll_ctl add channel failed");
         }
+        channel->setInEpoll(true);
     } else {
         if (epoll_ctl(epfd, EPOLL_CTL_MOD, fd, &ev) == -1) {
             throw std::runtime_error("epoll_ctl mod channel failed");
@@ -58,7 +59,7 @@ void Epoll::updateChannel(Channel* channel) {
     }
 }
 
-std::vector<Channel *> Epoll::getActiveChannels(int timeout) {
+std::vector<Channel*> Epoll::getActiveChannels(int timeout) {
     std::vector<Channel*> activeChannels;
     int nfds = epoll_wait(epfd, events.data(), MAX_EVENTS, timeout);
     if (nfds == -1) {
@@ -66,7 +67,7 @@ std::vector<Channel *> Epoll::getActiveChannels(int timeout) {
     }
     for (int i = 0; i < nfds; ++i) {
         Channel* channel = static_cast<Channel*>(events[i].data.ptr);
-        channel->setRevents(events[i].events);
+        channel->setRevents(events[i].events);  // 设置内核返回的事件，R: return/result
         activeChannels.push_back(channel);
     }
     return activeChannels;

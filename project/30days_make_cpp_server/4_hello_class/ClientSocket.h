@@ -14,6 +14,7 @@ public:
     ClientSocket();
     explicit ClientSocket(int fd, const InetAddress& addr);
     explicit ClientSocket(const InetAddress& addr);
+    // override表示重写父类的析构函数，default表示让编译器生成一个默认的析构函数
     ~ClientSocket() override = default;
     // 禁止拷贝
     ClientSocket(const ClientSocket&) = delete;

@@ -10,13 +10,13 @@ private:
     uint32_t events;
     uint32_t revents;
     bool inEpoll;
-    std::function<void()> readCallback;
+    std::function<void()> callback;
 public:
     Channel(EventLoop* loop, int fd);
     ~Channel();
     
     void handleEvent();
-    void setReadCallback(const std::function<void()>& cb);
+    void setCallback(const std::function<void()>& cb);
     void enableReading();
     int getFd() const;
     uint32_t getEvents() const;

@@ -18,6 +18,7 @@ BaseSocket::BaseSocket(int fd) : fd(fd) {
 BaseSocket::~BaseSocket() {
     if (fd != -1) {
         ::close(fd);
+        std::cout << "成功关闭文件描述符:" << fd << std::endl;
     }
 }
 

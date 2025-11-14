@@ -8,14 +8,14 @@ Channel::~Channel() {}
 
 void Channel::handleEvent() {
     if (revents & EPOLLIN) {
-        if (readCallback) {
-            readCallback();
+        if (callback) {
+            callback();
         }
     }
 }
 
-void Channel::setReadCallback(const std::function<void()>& cb) {
-    readCallback = cb;
+void Channel::setCallback(const std::function<void()>& cb) {
+    callback = cb;
 }
 
 void Channel::enableReading() {
