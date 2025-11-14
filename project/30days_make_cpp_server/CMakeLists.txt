@@ -39,6 +39,10 @@ add_executable(4_client
 4_hello_class/client.cpp 4_hello_class/BaseSocket.cpp 4_hello_class/ClientSocket.cpp 4_hello_class/InetAddress.cpp 4_hello_class/util.cpp
 )
 
+add_executable(4_client2
+4_hello_class/client.cpp 4_hello_class/BaseSocket.cpp 4_hello_class/ClientSocket.cpp 4_hello_class/InetAddress.cpp 4_hello_class/util.cpp
+)
+
 add_executable(4_server2
 4_hello_class/EventLoop.cpp 4_hello_class/Channel.cpp 4_hello_class/Server.cpp
 4_hello_class/server2.cpp 4_hello_class/Epoll.cpp 4_hello_class/BaseSocket.cpp 

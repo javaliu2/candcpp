@@ -52,6 +52,27 @@ void Server::handleDeleteConnection(ClientSocket *clientSocket) {
     delete conn;  // 调用conn的析构，析构函数里又调用了clientSocket的析构，最终clientSocket的fd被关闭，资源被正确释放
 }
 
+/**
+ * 将服务端标准输入内容回显到所有客户端
+ */
+void Server::echoAll() {
+    // 1、从stdio获取内容
+    char buf[1024];
+    int n = ::read(STDIN_FILENO, buf, sizeof(buf));
+    if (n <= 0) {
+        std::cerr << "read from stdio failed\n";
+        return;
+    }
+    std::string content(buf, n);
+    // 2、逐一回显
+    std::map<int, Connection*>::iterator iter = connections.begin();
+    while (iter != connections.end()) {
+        Connection* conn = (*iter).second;
+        conn->write(content);
+        iter++;
+    }
+ }
+
 void Server::handleRead(int clientFd) {
     char buf[1024];
     while (true) {

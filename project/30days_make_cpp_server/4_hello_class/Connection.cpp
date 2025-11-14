@@ -3,6 +3,7 @@
 #include "ClientSocket.h"
 #include "EventLoop.h"
 #include <iostream>
+#include <string>
 
 Connection::Connection(EventLoop* loop_, ClientSocket* socket_) : loop(loop_), socket(socket_), channel(nullptr) {
     channel = new Channel(loop, socket->getFd());
@@ -20,12 +21,12 @@ Connection::~Connection() {
 void Connection::echo(int clientFd) {
     char buf[1024];
     while (true) {
-        ssize_t n = read(clientFd, buf, sizeof(buf));
+        ssize_t n = ::read(clientFd, buf, sizeof(buf));
         if (n > 0) {
             std::string msg(buf, n);
             std::cout << "Received message from client fd " << clientFd << ": " <<  msg << std::endl;     
             // Echo the message back to the client
-            write(clientFd, msg.c_str(), msg.size());
+            ::write(clientFd, msg.c_str(), msg.size());
         } else if (n == 0) {
             std::cout << "Client fd " << clientFd << " disconnected." << std::endl;
             // close(clientFd);  // 不能这样直接关闭fd，要通过调用Connection的删除连接回调函数
@@ -44,4 +45,23 @@ void Connection::echo(int clientFd) {
 
 void Connection::setDeleteConnectionCallback(const std::function<void(ClientSocket*)>& cb) {
     deleteConnectionCallback = cb;
+}
+
+std::string Connection::read() {
+    char buf[1024];
+    int ret = socket->read(buf, sizeof(buf));
+    if (ret > 0) {
+        return std::string(buf, ret);
+    } else if (ret == 0) {
+        std::cerr << "client" << socket->getFd() << "disconnected.\n";
+    } else if (ret == -1 && errno == EAGAIN) {
+        std::cerr << "all data has been read.\n";
+    } else {
+        std::cerr << "other error.\n";
+    }
+    return nullptr;
+}
+
+void Connection::write(std::string content) {
+    socket->write(content.c_str(), content.size());
 }

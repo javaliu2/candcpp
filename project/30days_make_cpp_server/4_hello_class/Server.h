@@ -18,4 +18,5 @@ public:
     void handleNewConnection1(ClientSocket* clientSocket);
     void handleRead(int clientFd);
     void handleDeleteConnection(ClientSocket* clientSocket);
+    void echoAll();
 };
