@@ -40,7 +40,7 @@ add_executable(4_client
 )
 
 add_executable(4_client2
-4_hello_class/client.cpp 4_hello_class/BaseSocket.cpp 4_hello_class/ClientSocket.cpp 4_hello_class/InetAddress.cpp 4_hello_class/util.cpp
+4_hello_class/client2.cpp 4_hello_class/BaseSocket.cpp 4_hello_class/ClientSocket.cpp 4_hello_class/InetAddress.cpp 4_hello_class/util.cpp
 )
 
 add_executable(4_server2

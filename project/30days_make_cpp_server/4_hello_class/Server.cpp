@@ -68,6 +68,9 @@ void Server::echoAll() {
     std::map<int, Connection*>::iterator iter = connections.begin();
     while (iter != connections.end()) {
         Connection* conn = (*iter).second;
+        int client_fd = (*iter).first;
+        printf("client_fd %d echo triggered!\n", client_fd);
+        printf("content: %s\n", content.c_str());
         conn->write(content);
         iter++;
     }

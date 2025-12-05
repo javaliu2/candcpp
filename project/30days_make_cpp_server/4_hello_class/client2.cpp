@@ -21,17 +21,17 @@ int main () {
     int epfd = epoll_create1(0);
     errif(epfd == -1, "epoll create failed.");
     int fd = STDIN_FILENO;
-    int oldflags = fcntl(fd, F_GETFL);  // 获取fd指向的文件状态标志，影响IO
-    fcntl(fd, F_GETFD);  // 获取fd本身的状态，影响进程
-    fcntl(fd, F_SETFL, oldflags | O_NONBLOCK);
-    fcntl(sockfd, F_SETFL, fcntl(sockfd, F_GETFL) | O_NONBLOCK);
+    // int oldflags = fcntl(fd, F_GETFL);  // 获取fd指向的文件状态标志，影响IO
+    // fcntl(fd, F_GETFD);  // 获取fd本身的状态，影响进程
+    // fcntl(fd, F_SETFL, oldflags | O_NONBLOCK);
     epoll_event ev{};
-    ev.events = EPOLLIN | EPOLLET;  // 以ET模式监听stdio上的读事件、写事件
+    ev.events = EPOLLIN;  // 以LT模式监听stdio上的读事件、写事件
     // 望文生义，理解错了，来自server的数据是在sockfd上的，不会触发stdio的EPOLLOUT，更何况
     // EPOLLOUT表示stdio是否是可写的
     ev.data.fd = fd;
     int ret = epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &ev);
-
+    
+    fcntl(sockfd, F_SETFL, fcntl(sockfd, F_GETFL) | O_NONBLOCK);
     ev.events = EPOLLIN | EPOLLET;
     ev.data.fd = sockfd;
     ret = epoll_ctl(epfd, EPOLL_CTL_ADD, sockfd, &ev);
@@ -51,8 +51,14 @@ int main () {
                 int n = read(fd, buf, sizeof(buf));
                 if (n > 0) write(sockfd, buf, n);
             } else if (fd == sockfd && (event.events & EPOLLIN)) {
-                int n = read(sockfd, buf, sizeof(buf));
-                if (n > 0) write(STDOUT_FILENO, buf, n);
+                while (true) {
+                    int n = read(sockfd, buf, sizeof(buf));
+                    printf("message from server input:");
+                    if (n > 0) write(STDOUT_FILENO, buf, n);
+                    else if (n==-1 && errno == EAGAIN) break;
+                    else break;
+                }
+                
             }
         }
     }
