@@ -4,7 +4,7 @@
 #include <vector>
 
 EventLoop::EventLoop()
-    : epoll(new Epoll()), quit(false) {}
+    : epoll(new Epoll()), quit(false), threadPool(new ThreadPool()) {}
 
 EventLoop::~EventLoop() {
     delete epoll;
@@ -21,4 +21,8 @@ void EventLoop::loop() {
 
 void EventLoop::updateChannel(Channel* channel) {
     epoll->updateChannel(channel);
+}
+
+void EventLoop::addThreadPool(std::function<void()> task) {
+    threadPool->addTask(task);
 }

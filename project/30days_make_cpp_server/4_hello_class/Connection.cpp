@@ -19,6 +19,7 @@ Connection::~Connection() {
 }
 
 void Connection::echo(int clientFd) {
+    std::cout << "in Connection::echo(int clientFd), solve thread id: " << std::this_thread::get_id() << "\n";
     char buf[1024];
     while (true) {
         ssize_t n = ::read(clientFd, buf, sizeof(buf));

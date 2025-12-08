@@ -24,6 +24,7 @@ void Acceptor::setNewConnectionCallback(const std::function<void(ClientSocket*)>
  * 接收客户端连接，调用处理连接的回调函数
  */
 void Acceptor::acceptConnection() {
+    std::cout << "in Acceptor::acceptConnection(), solve thread id: " << std::this_thread::get_id() << "\n";
     ClientSocket* clientSocket = serverSocket->accept();
     std::cout << "New client connected from " 
               << clientSocket->getAddress().getIp() << ":"

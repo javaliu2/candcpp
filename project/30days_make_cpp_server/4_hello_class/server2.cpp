@@ -3,8 +3,10 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <functional>
+#include <iostream>
 
 int main() {
+    std::cout << "main thread id: " << std::this_thread::get_id() << "\n";
     EventLoop loop;
     Server server(&loop);
 

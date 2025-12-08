@@ -9,7 +9,10 @@ Channel::~Channel() {}
 void Channel::handleEvent() {
     if (revents & EPOLLIN) {
         if (callback) {
-            callback();
+            // 1、主线程执行回调函数
+            // callback();
+            // 2、使用线程池对回调函数进行执行
+            loop->addThreadPool(callback);
         }
     }
 }

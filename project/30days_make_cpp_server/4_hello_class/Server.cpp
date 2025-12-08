@@ -39,6 +39,7 @@ void Server::handleNewConnection(ServerSocket* serverSocket) {
  * Acceptor已经接收了连接，这里直接处理clientSocket
  */
 void Server::handleNewConnection1(ClientSocket* clientSocket) {
+    std::cout << "in Server::handleNewConnection1(), solve thread id: " << std::this_thread::get_id() << "\n";
     Connection* conn = new Connection(loop, clientSocket);  // 创建连接对象
     connections[clientSocket->getFd()] = conn;
     std::function<void(ClientSocket*)> cb = std::bind(&Server::handleDeleteConnection, this, std::placeholders::_1);
