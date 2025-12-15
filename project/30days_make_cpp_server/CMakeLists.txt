@@ -48,3 +48,13 @@ add_executable(4_server2
 4_hello_class/server2.cpp 4_hello_class/Epoll.cpp 4_hello_class/BaseSocket.cpp 
 4_hello_class/ServerSocket.cpp 4_hello_class/ClientSocket.cpp 4_hello_class/InetAddress.cpp 
 4_hello_class/util.cpp 4_hello_class/Acceptor.cpp 4_hello_class/Connection.cpp 4_hello_class/ThreadPool.cpp)
+
+add_executable(5_client
+5_main_sub_reactor/client.cpp 5_main_sub_reactor/BaseSocket.cpp 5_main_sub_reactor/ClientSocket.cpp 5_main_sub_reactor/InetAddress.cpp 5_main_sub_reactor/util.cpp
+5_main_sub_reactor/ThreadPool.cpp)
+
+add_executable(5_server
+5_main_sub_reactor/EventLoop.cpp 5_main_sub_reactor/Channel.cpp 5_main_sub_reactor/Server.cpp
+5_main_sub_reactor/server.cpp 5_main_sub_reactor/Epoll.cpp 5_main_sub_reactor/BaseSocket.cpp 
+5_main_sub_reactor/ServerSocket.cpp 5_main_sub_reactor/ClientSocket.cpp 5_main_sub_reactor/InetAddress.cpp 
+5_main_sub_reactor/util.cpp 5_main_sub_reactor/Acceptor.cpp 5_main_sub_reactor/Connection.cpp 5_main_sub_reactor/ThreadPool.cpp)
