@@ -41,7 +41,7 @@ Server::~Server() {
  * Acceptor已经接收了连接，这里直接处理clientSocket
  */
 void Server::handleNewConnection(ClientSocket* clientSocket) {
-    std::cout << "in Server::handleNewConnection1(), solve thread id: " << std::this_thread::get_id() << "\n";
+    std::cout << "in Server::handleNewConnection(), solve thread id: " << std::this_thread::get_id() << "\n";
     // 使用 sub-reactor 处理新连接请求; 调度策略: 随机
     int idx = clientSocket->getFd() % subReactors.size();
     Connection* conn = new Connection(subReactors[idx], clientSocket);  // 创建连接对象

@@ -53,6 +53,10 @@ add_executable(5_client
 5_main_sub_reactor/client.cpp 5_main_sub_reactor/BaseSocket.cpp 5_main_sub_reactor/ClientSocket.cpp 5_main_sub_reactor/InetAddress.cpp 5_main_sub_reactor/util.cpp
 5_main_sub_reactor/ThreadPool.cpp)
 
+add_executable(5_client2
+5_main_sub_reactor/client2.cpp 5_main_sub_reactor/BaseSocket.cpp 5_main_sub_reactor/ClientSocket.cpp 5_main_sub_reactor/InetAddress.cpp 5_main_sub_reactor/util.cpp
+5_main_sub_reactor/ThreadPool.cpp 5_main_sub_reactor/Logger.cpp)
+
 add_executable(5_server
 5_main_sub_reactor/EventLoop.cpp 5_main_sub_reactor/Channel.cpp 5_main_sub_reactor/Server.cpp
 5_main_sub_reactor/server.cpp 5_main_sub_reactor/Epoll.cpp 5_main_sub_reactor/BaseSocket.cpp 
