@@ -78,8 +78,13 @@ void fun() {
 int main () {
     const int size = 8;
     ThreadPool threadPool(size);
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> sleep_dist(2, 4);
     for (int i = 0; i < size; ++i) {
         threadPool.addTask(fun);
+        // int sec = sleep_dist(gen);
+        // std::this_thread::sleep_for(std::chrono::seconds(sec));
     }
     return 0;
 }

@@ -53,12 +53,14 @@ ClientSocket* ServerSocket::accept() {
     InetAddress client_addr;
     int client_socket_fd = ::accept(fd, client_addr.getMutableSockAddr(), client_addr.getMutableSockLen());
     if (client_socket_fd == -1) {
+        if (errno == EAGAIN || errno == EWOULDBLOCK) {
+            return nullptr;
+        }
         perror("ServerSocket::accept() accept error");
-        throw std::runtime_error("ServerSocket::accept() accept failed");
         return nullptr;
     }
-    auto ret = new ClientSocket(client_socket_fd, client_addr);
-    ret->setNonBlocking();
-    ret->setState(ClientSocket::State::Connected);
-    return ret;
+    auto client = new ClientSocket(client_socket_fd, client_addr);
+    client->setNonBlocking();
+    client->setState(ClientSocket::State::Connected);
+    return client;
 }

@@ -16,8 +16,8 @@ public:
 
     int getFd() const { return fd; };
     void setNonBlocking(bool enable = true);
-    void setReuseAddr(bool enable = true);
-    void setReusePort(bool enable = true);
+    void setReuseAddr(bool enable = true);  // 允许服务器端socket绑定处于TIME_WAIT状态的TCP连接占有的地址(ip:port)
+    void setReusePort(bool enable = true);  // 允许多个进程(socket)绑定、监听同一个地址
 
     void close();
     // 禁止拷贝

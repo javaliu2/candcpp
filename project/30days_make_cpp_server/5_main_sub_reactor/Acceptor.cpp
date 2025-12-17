@@ -10,7 +10,8 @@ Acceptor::Acceptor(EventLoop* loop)
       serverSocket(new ServerSocket(InetAddress("127.0.0.1", 9999))),
       channel(new Channel(loop, serverSocket->getFd())),
       newConnectionCallback(nullptr) {
-    serverSocket->setNonBlocking(true);
+    serverSocket->setNonBlocking();
+    serverSocket->setReuseAddr();
     channel->setCallback([this]() { this->acceptConnection(); });
     channel->enableReading();
 }
@@ -25,12 +26,17 @@ void Acceptor::setNewConnectionCallback(const std::function<void(ClientSocket*)>
  * 接收客户端连接，调用处理连接的回调函数
  */
 void Acceptor::acceptConnection() {
-    std::cout << "in Acceptor::acceptConnection(), solve thread id: " << std::this_thread::get_id() << "\n";
-    ClientSocket* clientSocket = serverSocket->accept();
-    std::cout << "New client connected from " 
-              << clientSocket->getAddress().getIp() << ":"
-              << clientSocket->getAddress().getPort() << std::endl;
-    if (newConnectionCallback) {
-        newConnectionCallback(clientSocket);
+    while (true) {
+        std::cout << "in Acceptor::acceptConnection(), solve thread id: " << std::this_thread::get_id() << "\n";
+        ClientSocket* clientSocket = serverSocket->accept();
+        if (!clientSocket) {
+            break;
+        }
+        std::cout << "New client connected from " 
+                  << clientSocket->getAddress().getIp() << ":"
+                  << clientSocket->getAddress().getPort() << std::endl;
+        if (newConnectionCallback) {
+            newConnectionCallback(clientSocket);
+        }
     }
 }
