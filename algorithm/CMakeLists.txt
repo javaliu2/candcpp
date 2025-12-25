@@ -60,4 +60,6 @@ add_executable(26
 leetcode/array/26.cpp
 )
 
+add_executable(3075
+leetcode/simulation/3075.cpp)
 
