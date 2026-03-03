@@ -69,24 +69,44 @@ string func(string s) {
     reverse(s_ans.begin(), s_ans.end());
     return s_ans;
 }
-
+// "bcd2[3[sd]2[as4[qq]]]qwe";
 string func_recursion(string& s, int& pos) {
     string ans;
-    if (isdigit(s[pos])) {
-        int k = 0;
-        while (pos < s.size() && s[pos] != '[') {
-            k = k * 10 + (s[pos] - '0');
-            pos++;
+    while (pos < s.size()) {
+        char c = s[pos];
+        if (isalpha(c)) {
+            ans += c;
+            ++pos;
+        } else if (isdigit(c)) {
+            int k = 0;
+            while (pos < s.size() && s[pos] != '[') {
+                k = k * 10 + (s[pos] - '0');
+                ++pos;
+            }
+            ++pos;  // 跳过'['
+            string res = func_recursion(s, pos);
+            while (k--) {
+                ans += res;
+            }
+        } else if (c == ']') {
+            ++pos;  // 跳过']'
+            return ans; 
         }
     }
     return ans;
 }
 int main(int argc, char** argv) {
     string s = "3[ab]4[s]";
-    s = "2[3[sd]2[as4[qq]]]qwe";
+   
     s = "10[a]";
+    s = "3[4[bc]aa]def";
+    s = "bcd2[3[sd]2[as4[qq]]]qwe";
     s = "1[3[a]5[4[sd3[as2[a]]]]]";
     auto res = func(s);
+    int pos = 0;
+    auto res2 = func_recursion(s, pos);
+    cout << (res == res2) << endl;
     cout << res << endl;
+    cout << res2 << endl;
     return 0;
 }
