@@ -67,3 +67,6 @@ leetcode/simulation/3075.cpp)
 add_executable(decode_string
 leetcode/stack/decode_string.cpp)
 
+add_executable(next_permutation
+leetcode/array/31.cpp)
+
