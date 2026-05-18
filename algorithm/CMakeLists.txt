@@ -70,3 +70,6 @@ leetcode/stack/decode_string.cpp)
 add_executable(next_permutation
 leetcode/array/31.cpp)
 
+add_executable(1345
+leetcode/bfs/1345.cpp)
+
