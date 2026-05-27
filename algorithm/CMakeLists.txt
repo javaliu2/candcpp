@@ -73,3 +73,6 @@ leetcode/array/31.cpp)
 add_executable(1345
 leetcode/bfs/1345.cpp)
 
+add_executable(3121
+leetcode/string/3121.cpp)
+
