@@ -1,6 +1,7 @@
 .vscode/
 build/
 books/
+resource/
 .clang-format
 翁恺C++代码/
 practicemakesprefect/
