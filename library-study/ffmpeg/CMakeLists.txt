@@ -14,9 +14,11 @@ target_link_libraries(demux_decode_demo avformat avutil avcodec)
 add_executable(linesize_test ${CMAKE_SOURCE_DIR}/src/linesize_test.c)
 target_link_libraries(linesize_test avutil)
 
-
 add_executable(read_one_video_frame ${CMAKE_SOURCE_DIR}/src/read_one_video_frame.c)
 target_link_libraries(read_one_video_frame avformat avutil avcodec swscale)
 
 add_executable(read_one_audio_frame ${CMAKE_SOURCE_DIR}/src/read_one_audio_frame.c)
 target_link_libraries(read_one_audio_frame avformat avutil avcodec swscale)
+
+add_executable(decode_audio ${CMAKE_SOURCE_DIR}/src/decode_audio.c)
+target_link_libraries(decode_audio avutil avcodec)
