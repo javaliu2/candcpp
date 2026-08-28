@@ -22,3 +22,6 @@ target_link_libraries(read_one_audio_frame avformat avutil avcodec swscale)
 
 add_executable(decode_audio ${CMAKE_SOURCE_DIR}/src/decode_audio.c)
 target_link_libraries(decode_audio avutil avcodec)
+
+add_executable(decode_video ${CMAKE_SOURCE_DIR}/src/decode_video.c)
+target_link_libraries(decode_video avutil avcodec)
