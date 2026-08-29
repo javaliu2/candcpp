@@ -25,3 +25,7 @@ target_link_libraries(decode_audio avutil avcodec)
 
 add_executable(decode_video ${CMAKE_SOURCE_DIR}/src/decode_video.c)
 target_link_libraries(decode_video avutil avcodec)
+
+add_executable(encode_video ${CMAKE_SOURCE_DIR}/src/encode_video.c)
+target_link_libraries(encode_video avutil avcodec)
+

@@ -15,6 +15,9 @@
 
 #define AUDIO_INBUF_SIZE 20480
 #define AUDIO_REFILL_THRESH 4096
+FILE *log_file = NULL;
+int log_i;
+int64_t audio_frame_idx = 0;
 
 static int get_format_from_sample_fmt(const char **fmt,
                                       enum AVSampleFormat sample_fmt)
@@ -62,12 +65,13 @@ static void decode(AVCodecContext *dec_ctx, AVPacket *pkt, AVFrame *frame, FILE 
         exit(1);
     }
     /* read all the output frames (in general there may be any number of them) */
+    fprintf(log_file, "==round %d: ==\n", log_i++);
     while (ret >= 0)
     {
         ret = avcodec_receive_frame(dec_ctx, frame);
         if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
         {
-            return;
+            break;
         }
         else if (ret < 0)
         {
@@ -77,6 +81,17 @@ static void decode(AVCodecContext *dec_ctx, AVPacket *pkt, AVFrame *frame, FILE 
         // s16p, AV_SAMPLE_FMT_S16P, 16bits, 故2字节
         data_size = av_get_bytes_per_sample(dec_ctx->sample_fmt);
         printf("data_size: %d\n", data_size);  // 2
+        fprintf(log_file,
+        "frame=%" PRId64
+        ", pts=%" PRId64
+        ", nb_samples=%d"
+        ", sample_rate=%d"
+        ", data_size=%d\n",
+        audio_frame_idx++,
+        frame->pts,
+        frame->nb_samples,
+        frame->sample_rate,
+        data_size);
         if (data_size < 0)
         {
             /* this should not occur, checking just for paranoia(多疑、无端恐惧) */
@@ -97,10 +112,19 @@ static void decode(AVCodecContext *dec_ctx, AVPacket *pkt, AVFrame *frame, FILE 
             }
         }
     }
+    fprintf(log_file, "=====end=====\n");
 }
 
 int main(int argc, char **argv)
-{
+{   
+    const char *log_filename = "decode_audio_log";
+    log_file = fopen(log_filename, "w+");
+    log_i = 0;
+
+    if (!log_file) {
+        fprintf(stderr, "open %s failed.\n", log_filename);
+        exit(1);
+    }
     const char *outfilename, *filename;
     const AVCodec *codec = NULL;
     AVCodecContext *codec_ctx = NULL;

@@ -327,6 +327,7 @@ int main(int argc, char** argv) {
         printf("[main] Demuxing audio from file '%s' into '%s'\n", src_filename, audio_dst_filename);
     }
     /* read frames from the file */
+    // 这里获取到的是未解码的帧，就是packet数据，不要被函数名误导了
     while (av_read_frame(fmt_ctx, pkt) >= 0) {
         // check if the packet belongs to a stream we are interested in, otherwise skip it
         if (pkt->stream_index == video_stream_idx) {
@@ -348,6 +349,9 @@ int main(int argc, char** argv) {
     }
     printf("Demuxing successed.\n");
     if (video_stream) {
+        // video_dst_filename中只有解码后的原始帧数据，没有关于这些数据的描述
+        // 因此，播放的时候，要给出rawvideo视频文件的信息
+        // ffplay -f rawvideo -pixel_format yuv420p -video_size 1920*1080 rawvideo
         printf("Play the output video file with the command:\n"
         "ffplay -f rawvideo -pixel_format %s -video_size %dx%d %s\n",
         av_get_pix_fmt_name(pix_fmt), width, height, video_dst_filename);
@@ -375,6 +379,7 @@ int main(int argc, char** argv) {
         if ((ret = av_channel_layout_describe(ch_layout, buf, sizeof(buf))) < 0) {
             goto end;
         }
+        // ffplay -f f32le -ch_layout mono -sample_rate 44100 rawaudio
         printf("Play the output audio file with the command:\n"
         "ffplay -f %s -ch_layout %s -sample_rate %d %s\n",
         fmt, buf, audio_dec_ctx->sample_rate, audio_dst_filename);
