@@ -5,6 +5,8 @@ project(ffmpeg_study)
 include_directories(/usr/include)
 include_directories(${CMAKE_SOURCE_DIR}/src)
 link_directories(/usr/lib)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(SDL2 REQUIRED sdl2)
 
 add_executable(ref_test ${CMAKE_SOURCE_DIR}/src/ref.cpp)
 
@@ -28,4 +30,9 @@ target_link_libraries(decode_video avutil avcodec)
 
 add_executable(encode_video ${CMAKE_SOURCE_DIR}/src/encode_video.c)
 target_link_libraries(encode_video avutil avcodec)
+
+add_executable(pull_ipc ${CMAKE_SOURCE_DIR}/src/pull_ipc.cpp)
+target_link_libraries(pull_ipc avutil avcodec avformat ${SDL2_LIBRARIES})
+
+
 
